@@ -19,7 +19,7 @@ library(tidyr)
 library(dplyr)
 ```
 
-# Loading the data
+# Loading and cleaning the data
 
 We load the first spreadsheet, and modify the ID command to get a number.
 ```
@@ -112,7 +112,7 @@ We now treat all the missing scores as 0.
 data[is.na(data)] <- 0
 ```
 
-# Weigthed Score
+# Computing the weigthed Score
 
 We drop the two lowest labs.
 ```
