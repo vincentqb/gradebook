@@ -1,0 +1,170 @@
+---
+title: "Grade Calculator"
+author: "Vincent Quenneville-Bélair"
+date: "February 5, 2016"
+output: pdf_document
+---
+
+We begin by packages to handle opening spreadsheets, to tidy the data, and to manipulate the data frames.
+```
+install.packages(tidyr, dplyr)
+install.packages(xlsx, readODS)
+
+library(xlsx)
+library(readODS)
+
+library(stringr)
+library(tidyr)
+
+library(dplyr)
+```
+
+# Loading the data
+
+We load the first spreadsheet, and modify the ID command to get a number.
+```
+labels <- c("ID", "Lab 1", "Lab 2", "Lab 3", "Lab 4", "Lab 5", "Lab 6", "Lab 7", "Lab 8", "Lab 9", "Lab 10", "Lab 11", "Lab 12", "Quiz 2", "Quiz 1")
+
+# Load spreadsheet
+sec12 <- read.xlsx("data/Fall 2015 Lab 120, Sec 1L12.xlsx", sheetName = "Sheet1", rowIndex = -c(1:7), colIndex = c(1:15))
+# summary(sec12)
+
+# Assign the correct labels
+names(sec12) <- labels
+sec12 <- sec12[complete.cases(sec12[,1]),]
+
+# Clean IDs
+sec12 <- sec12 %>%
+  mutate(ID = str_replace_all(ID, "s", "")) %>%
+  mutate(ID = str_replace_all(ID, " ", "")) %>%
+  mutate(ID = str_replace_all(ID, "S", ""))
+
+sec12$ID <- as.integer(sec12$ID)
+```
+
+We now read the second spreadsheet, and do similar conversions.
+```
+# Load spreadsheet
+sec09 <- read.ods("data/Fall 2015 Lab 120 section 1L09.ods", sheet = 1)
+sec09 <- sec09[9:28,1:15]
+names(sec09) <- labels
+
+# Clean IDs
+sec09 <- sec09 %>%
+  mutate(ID = str_replace_all(ID, "s", "")) %>%
+  mutate(ID = str_replace_all(ID, " ", "")) %>%
+  mutate(ID = str_replace_all(ID, "S", ""))
+
+# Convert to numeric data type
+sec09 <- sapply(sec09, as.numeric)
+sec09 <- as.data.frame(sec09)
+sec09$ID <- as.integer(sec09$ID)
+```
+
+We finally read the third spreadsheet.
+```
+# Load spreadsheet
+lec <- read.xlsx("data/lecture.xlsx", sheetName = "Sheet1", colIndex = c(2:5))
+labels <- c("ID", "Midterm 1", "Midterm 2", "Final 1")
+names(lec) <- labels
+
+# Clean IDs
+lec <- lec %>%
+  mutate(ID = str_replace_all(ID, "s", "")) %>%
+  mutate(ID = str_replace_all(ID, " ", "")) %>%
+  mutate(ID = str_replace_all(ID, "S", ""))
+```
+
+We then merge the two sections, and merge with lecture data.
+```
+data <- rbind(sec09, sec12)
+data <- merge(data, lec, by="ID", all = TRUE)
+```
+
+We scale the two quiz columns to 100.
+```
+data$`Quiz 1` = data$`Quiz 1`/20*100
+data$`Quiz 2` = data$`Quiz 2`/20*100
+
+# Backup original dataset
+data.original <- data
+```
+
+# Tidying the data
+
+We tidy the data, and make the data frame narrow and long.
+```
+data <- data %>% 
+  gather(key = "Type", value = "Score", -ID) %>%
+  separate(col = "Type", into = c("Type", "TypeNumber")) 
+
+# Convert to numerics
+data$TypeNumber <- as.integer(data$TypeNumber)
+# Remove not necessary column
+data <- select(data, -`TypeNumber`)
+
+# Backup tidy data
+data.tidy = data
+```
+
+We now treat all the missing scores as 0.
+```
+data[is.na(data)] <- 0
+```
+
+# Weigthed Score
+
+We drop the two lowest labs.
+```
+library(dplyr)
+data <- data %>%
+  group_by(ID, Type) %>%
+  mutate(RankedScore = rank(Score, na.last = FALSE, ties.method = "first")) %>%
+  filter((RankedScore > 2 & Type == "Lab") | (Type !="Lab")) %>%  # Drop two lowest labs
+  select(-`RankedScore`)
+
+data.bestlabs <- data
+```
+
+We make the weighted sum of the two midterms. We also take the mean per ID and Type.
+```
+weighted_minmax <- function(x){
+  .20/.55 * min(x) + .35/.55 * max(x)
+}
+
+data[data$Type == "Midterm",] <- data[data$Type == "Midterm",] %>% 
+  group_by(ID, Type) %>% 
+  mutate(Score = weighted_minmax(Score))
+  
+# Take mean per ID and Type
+data <- data %>% 
+  group_by(ID, Type) %>% 
+  summarise_each(funs(mean))
+```
+
+We now scale each score to its corresponding weight in the final score.
+```
+data[data$Type == "Lab",] <- data[data$Type == "Lab",] %>% 
+  group_by(ID, Type) %>% 
+  mutate(Score = .8 * .15 * Score)
+
+data[data$Type == "Quiz",] <- data[data$Type == "Quiz",] %>% 
+  group_by(ID, Type) %>% 
+  mutate(Score = .2 * .15 * Score)
+
+data[data$Type == "Midterm",] <- data[data$Type == "Midterm",] %>% 
+  group_by(ID, Type) %>% 
+  mutate(Score = .55 * .85 * Score)
+  
+data[data$Type == "Final",] <- data[data$Type == "Final",] %>% 
+  group_by(ID, Type) %>% 
+  mutate(Score = .45 * .85 * Score)
+```
+
+We can now simply sum per ID to get the final scores.
+```
+data %>% 
+  select(-Type) %>%
+  group_by(ID) %>% 
+  summarise_each(funs(sum))
+```
