@@ -112,7 +112,7 @@ We now treat all the missing scores as 0.
 data[is.na(data)] <- 0
 ```
 
-# Computing the weigthed Score
+# Computing the weigthed score
 
 We drop the two lowest labs.
 ```
