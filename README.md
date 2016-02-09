@@ -1,6 +1,6 @@
 # Grade Calculator
 
-Goal: Calculates the final grade given the weight of each hwk, midterm, final exam and lab report. The freshmen physics courses at Hunter College of The City University of New York are split into Lecture and Labs. Lecture accounts for 85% of the final grade and labs for 15%. The labs and lecture are taught by different instructors.
+Goal: Calculates the final grade given the weight of each hwk, midterm, final exam and lab report. The students are split into lecture and labs. Lecture accounts for 85% of the final grade and labs for 15%. The labs and lecture are taught by different instructors.
 
 ## The lab data
 * The last two columns represent quiz 1 and quiz 2. Each quiz is graded on the scale of 0-20. Each quiz is worth 10% of the lab grade.
