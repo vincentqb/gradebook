@@ -6,16 +6,15 @@ output: html_document
 ---
 
 We begin by packages to handle opening spreadsheets, to tidy the data, and to manipulate the data frames.
-```{r}
-install.packages(tidyr, dplyr)
-install.packages(xlsx, readODS)
+```{r echo=FALSE, message=FALSE}
+# install.packages(c("tidyr", "dplyr")
+# install.packages(c("xlsx", "readODS"))
 
 library(xlsx)
 library(readODS)
 
 library(stringr)
 library(tidyr)
-
 library(dplyr)
 ```
 
@@ -116,7 +115,6 @@ data[is.na(data)] <- 0
 
 We drop the two lowest labs.
 ```{r}
-library(dplyr)
 data <- data %>%
   group_by(ID, Type) %>%
   mutate(RankedScore = rank(Score, na.last = FALSE, ties.method = "first")) %>%
@@ -162,7 +160,7 @@ data[data$Type == "Final",] <- data[data$Type == "Final",] %>%
 ```
 
 We can now simply sum per ID to get the final scores.
-```{r}
+```{r comment=""}
 data %>% 
   select(-Type) %>%
   group_by(ID) %>% 
