@@ -5,10 +5,10 @@ date: "February 5, 2016"
 output: html_document
 ---
 
-## 
+`r opts_chunk$set(echo=FALSE, message=FALSE)`
 
 The goal is to compute the final score of each student. We need to open the required spreadsheets, tidy and manipulate the data, and finally compute the weighted score.
-```{r echo=FALSE, message=FALSE}
+```{r}
 # install.packages(c("tidyr", "dplyr")
 # install.packages(c("xlsx", "readODS"))
 
@@ -23,7 +23,7 @@ library(dplyr)
 ## Loading and cleaning the data
 
 We load the first spreadsheet, and modify the ID command to get a number.
-```{r echo=FALSE, comment=""}
+```{r}
 labels <- c("ID", "Lab 1", "Lab 2", "Lab 3", "Lab 4", "Lab 5", "Lab 6", "Lab 7", "Lab 8", "Lab 9", "Lab 10", "Lab 11", "Lab 12", "Quiz 2", "Quiz 1")
 
 # Load spreadsheet
@@ -48,7 +48,7 @@ head(sec12)
 ##
 
 We now read the second spreadsheet, and do similar conversions.
-```{r echo=FALSE, comment=""}
+```{r}
 # Load spreadsheet
 sec09 <- read.ods("data/Fall 2015 Lab 120 section 1L09.ods", sheet = 1)
 sec09 <- sec09[9:28,1:15]
@@ -68,6 +68,8 @@ sec09$ID <- as.integer(sec09$ID)
 head(sec09)
 ```
 
+##
+
 We finally read the third spreadsheet.
 ```{r}
 # Load spreadsheet
@@ -80,7 +82,11 @@ lec <- lec %>%
   mutate(ID = str_replace_all(ID, "s", "")) %>%
   mutate(ID = str_replace_all(ID, " ", "")) %>%
   mutate(ID = str_replace_all(ID, "S", ""))
+
+head(lec)
 ```
+
+##
 
 We then merge the two sections, and merge with lecture data.
 ```{r}
@@ -97,7 +103,11 @@ data$`Quiz 2` = data$`Quiz 2`/20*100
 data.original <- data
 ```
 
-# Tidying the data
+```{r}
+head(data)
+```
+
+## Tidying the data
 
 We tidy the data, and make the data frame narrow and long.
 ```{r}
@@ -119,7 +129,11 @@ We now treat all the missing scores as 0.
 data[is.na(data)] <- 0
 ```
 
-# Computing the weigthed score
+```{r}
+head(data)
+```
+
+## Computing the weigthed score
 
 We drop the two lowest labs.
 ```{r}
@@ -168,9 +182,15 @@ data[data$Type == "Final",] <- data[data$Type == "Final",] %>%
 ```
 
 We can now simply sum per ID to get the final scores.
-```{r comment=""}
-data %>% 
+```{r}
+data <- data %>% 
   select(-Type) %>%
   group_by(ID) %>% 
   summarise_each(funs(sum))
+```
+
+##
+
+```{r}
+head(data)
 ```
