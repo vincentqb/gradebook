@@ -5,7 +5,9 @@ date: "February 5, 2016"
 output: html_document
 ---
 
-We begin by packages to handle opening spreadsheets, to tidy the data, and to manipulate the data frames.
+## 
+
+The goal is to compute the final score of each student. We need to open the required spreadsheets, tidy and manipulate the data, and finally compute the weighted score.
 ```{r echo=FALSE, message=FALSE}
 # install.packages(c("tidyr", "dplyr")
 # install.packages(c("xlsx", "readODS"))
@@ -18,10 +20,10 @@ library(tidyr)
 library(dplyr)
 ```
 
-# Loading and cleaning the data
+## Loading and cleaning the data
 
 We load the first spreadsheet, and modify the ID command to get a number.
-```{r}
+```{r echo=FALSE, comment=""}
 labels <- c("ID", "Lab 1", "Lab 2", "Lab 3", "Lab 4", "Lab 5", "Lab 6", "Lab 7", "Lab 8", "Lab 9", "Lab 10", "Lab 11", "Lab 12", "Quiz 2", "Quiz 1")
 
 # Load spreadsheet
@@ -39,10 +41,14 @@ sec12 <- sec12 %>%
   mutate(ID = str_replace_all(ID, "S", ""))
 
 sec12$ID <- as.integer(sec12$ID)
+
+head(sec12)
 ```
 
+##
+
 We now read the second spreadsheet, and do similar conversions.
-```{r}
+```{r echo=FALSE, comment=""}
 # Load spreadsheet
 sec09 <- read.ods("data/Fall 2015 Lab 120 section 1L09.ods", sheet = 1)
 sec09 <- sec09[9:28,1:15]
@@ -58,6 +64,8 @@ sec09 <- sec09 %>%
 sec09 <- sapply(sec09, as.numeric)
 sec09 <- as.data.frame(sec09)
 sec09$ID <- as.integer(sec09$ID)
+
+head(sec09)
 ```
 
 We finally read the third spreadsheet.
