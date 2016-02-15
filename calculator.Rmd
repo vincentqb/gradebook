@@ -121,11 +121,12 @@ data <- data %>%
 
 # Convert to numerics
 data$TypeNumber <- as.integer(data$TypeNumber)
-# Remove not necessary column
-data <- select(data, -`TypeNumber`)
 
 # Backup tidy data
 data.tidy <- data
+
+# Remove not necessary column
+data <- select(data, -`TypeNumber`)
 
 # Look at data
 head(data)
@@ -206,6 +207,7 @@ data.course <- data
 Merge the final course score in the tidy table.
 ```{r}
 data$Type <- "Course"
+data$TypeNumber <- 1
 data <- rbind(data.tidy, data)
 ```
 ##
