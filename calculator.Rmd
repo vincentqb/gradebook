@@ -209,13 +209,14 @@ data[is.na(data)] <- 0
 data.course <- data
 ```
 
+## Gradebook
+
 Merge the final course score in the tidy table.
 ```{r}
 data$Type <- "Course"
 data$TypeNumber <- 1
 data <- rbind(data.tidy, data)
 ```
-##
 
 We save data frame to CSV.
 ```{r}
@@ -223,8 +224,6 @@ head(data)
 
 write.csv(data, "course.csv")
 ```
-
-## Gradebook
 
 We display the table interactively.
 ```{r}
