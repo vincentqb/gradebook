@@ -2,8 +2,13 @@
 title: "Grade Calculator"
 author: "Vincent Quenneville-Bélair"
 date: "February 5, 2016"
+runtime: shiny
 output: html_document
 ---
+
+```{r}
+library(knitr)
+```
 
 `r opts_chunk$set(echo=FALSE, message=FALSE)`
 
