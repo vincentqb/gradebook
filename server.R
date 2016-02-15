@@ -14,6 +14,6 @@ shinyServer(function(input, output) {
       data <- data[data$Type == input$Type,]
     }
     data
-  }, rownames= FALSE))
+  }, rownames = FALSE))
   
 })
