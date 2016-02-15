@@ -216,12 +216,8 @@ Merge the final course score in the tidy table.
 data$Type <- "Course"
 data$TypeNumber <- 1
 data <- rbind(data.tidy, data)
-```
 
-We save data frame to CSV.
-```{r}
-head(data)
-
+# We save data frame to CSV.
 write.csv(data, "course.csv")
 ```
 
