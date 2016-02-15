@@ -230,8 +230,7 @@ We display the table interactively.
 ```{r}
 library(shiny)
 
-# Define the interface
-
+# Make two dropdown menu appear side-by-side
 fluidRow(
   column(2, 
          selectInput("ID", "ID:", c("All", unique(as.character(data$ID))))
@@ -241,6 +240,7 @@ fluidRow(
          )
 )
 
+# Display the resulting table
 DT::renderDataTable(DT::datatable({
     data <- read.csv("course.csv")
     data$X <- NULL
