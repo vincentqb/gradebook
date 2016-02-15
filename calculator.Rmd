@@ -24,14 +24,16 @@ library(dplyr)
 
 We load the first spreadsheet, and modify the ID command to get a number.
 ```{r}
-labels <- c("ID", "Lab 1", "Lab 2", "Lab 3", "Lab 4", "Lab 5", "Lab 6", "Lab 7", "Lab 8", "Lab 9", "Lab 10", "Lab 11", "Lab 12", "Quiz 2", "Quiz 1")
-
 # Load spreadsheet
 sec12 <- read.xlsx("data/Fall 2015 Lab 120, Sec 1L12.xlsx", sheetName = "Sheet1", rowIndex = -c(1:7), colIndex = c(1:15))
 # summary(sec12)
 
 # Assign the correct labels
-names(sec12) <- labels
+names(sec12) <- names(sec12) %>% str_replace("\\.{1,}", " ") %>% str_to_title()
+names(sec12)[1] <- "ID"
+names(sec12)[7] <- "Lab 5"
+
+# Removing entries without IDs
 sec12 <- sec12[complete.cases(sec12[,1]),]
 
 # Clean IDs
@@ -52,6 +54,9 @@ We now read the second spreadsheet, and do similar conversions.
 # Load spreadsheet
 sec09 <- read.ods("data/Fall 2015 Lab 120 section 1L09.ods", sheet = 1)
 sec09 <- sec09[9:28,1:15]
+
+# Assign the correct labels
+labels <- c("ID", "Lab 1", "Lab 2", "Lab 3", "Lab 4", "Lab 5", "Lab 6", "Lab 7", "Lab 8", "Lab 9", "Lab 10", "Lab 11", "Lab 12", "Quiz 2", "Quiz 1")
 names(sec09) <- labels
 
 # Clean IDs
