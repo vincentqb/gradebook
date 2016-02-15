@@ -31,7 +31,7 @@ sec12 <- read.xlsx("data/Fall 2015 Lab 120, Sec 1L12.xlsx", sheetName = "Sheet1"
 # Assign the correct labels
 names(sec12) <- names(sec12) %>% str_replace("\\.{1,}", " ") %>% str_to_title()
 names(sec12)[1] <- "ID"
-names(sec12)[7] <- "Lab 5"
+names(sec12)[7] <- "Lab 6"
 
 # Removing entries without IDs
 sec12 <- sec12[complete.cases(sec12[,1]),]
@@ -125,16 +125,15 @@ data$TypeNumber <- as.integer(data$TypeNumber)
 data <- select(data, -`TypeNumber`)
 
 # Backup tidy data
-data.tidy = data
-```
+data.tidy <- data
 
-We now treat all the missing scores as 0.
-```{r}
-data[is.na(data)] <- 0
-```
-
-```{r}
+# Look at data
 head(data)
+```
+
+We now treat all the missing scores in types other than labs as 0.
+```{r}
+data[data$Type != "Lab", "Score"][is.na(data[data$Type != "Lab", "Score"])] <- 0
 ```
 
 ## Computing the weigthed score
@@ -149,6 +148,7 @@ data <- data %>%
 
 data.bestlabs <- data
 ```
+If there are NAs still assigned for labs, the student did not complete enough labs.
 
 We make the weighted sum of the two midterms. We also take the mean per ID and Type.
 ```{r}
@@ -191,6 +191,11 @@ data <- data %>%
   select(-Type) %>%
   group_by(ID) %>% 
   summarise_each(funs(sum))
+```
+
+If the score is NA, the student did not do enough lab to pass the course.
+```{r}
+data[is.na(data)] <- 0
 ```
 
 ##
