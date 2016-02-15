@@ -6,7 +6,7 @@ runtime: shiny
 output: html_document
 ---
 
-```{r}
+```{r echo=FALSE, message=FALSE}
 library(knitr)
 ```
 
@@ -217,9 +217,39 @@ data <- rbind(data.tidy, data)
 ```
 ##
 
-Save data frame.
+We save data frame to CSV.
 ```{r}
 head(data)
 
 write.csv(data, "course.csv")
+```
+
+# Gradebook
+
+We display the table interactively.
+```{r}
+library(shiny)
+
+# Define the interface
+
+fluidRow(
+  column(2, 
+         selectInput("ID", "ID:", c("All", unique(as.character(data$ID))))
+         ),
+  column(2, 
+         selectInput("Type", "Type:", c("All", unique(as.character(data$Type))))
+         )
+)
+
+DT::renderDataTable(DT::datatable({
+    data <- read.csv("course.csv")
+    data$X <- NULL
+    if (input$ID != "All") {
+      data <- data[data$ID == input$ID,]
+    }
+    if (input$Type != "All") {
+      data <- data[data$Type == input$Type,]
+    }
+    data
+  }, rownames = FALSE))
 ```
