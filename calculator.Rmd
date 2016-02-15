@@ -217,7 +217,7 @@ data$Type <- "Course"
 data$TypeNumber <- 1
 data <- rbind(data.tidy, data)
 
-# We save data frame to CSV.
+# Save data frame to CSV
 write.csv(data, "course.csv")
 ```
 
