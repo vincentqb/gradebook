@@ -224,7 +224,7 @@ head(data)
 write.csv(data, "course.csv")
 ```
 
-# Gradebook
+## Gradebook
 
 We display the table interactively.
 ```{r}
