@@ -1,6 +1,6 @@
 # Grade Calculator
 
-Goal: Calculate the final grade given the weight of each homework, midterm, final exam and lab report. 
+We calculate the final grade of each student given the weight of each homework, midterm, final exam and lab report. Here is the final grade distribution.
 
 ![Final Grade Distribution](histogram.png)
 
