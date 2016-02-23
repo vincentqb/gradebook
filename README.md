@@ -12,3 +12,5 @@ The students are split into lecture and labs. Lecture accounts for 85% of the fi
 There are two midterms and a final:
 * The lowest midterm is worth 20% and the highest 35%.
 * The final exam is worth 45%.
+
+![Final Grade Distribution](histogram.png)
