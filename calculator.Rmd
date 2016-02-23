@@ -279,6 +279,8 @@ head(data)
 # 6     6 59.7525
 ```
 
+## Grade distribution
+
 We plot the grade distribution.
 ```{r, echo=TRUE, fig.show='hide'}
 library(ggplot2)
@@ -295,7 +297,7 @@ ggplot(data = data, aes(score)) +
 
 ![Grade distribution.](histogram.png)
 
-## Gradebook
+## Interactive gradebook
 
 Merge the final course score in the tidy table.
 ```{r}
