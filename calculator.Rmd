@@ -289,10 +289,11 @@ num_bins = 20
 score <- data$Score
 bins <- seq(min(score), max(score), length.out = num_bins + 1)
 
-# qplot(x, breaks = bins, col=I("white"))
+qplot(score, breaks = bins, col = I("white"))
 
-ggplot(data = data, aes(score)) +
- geom_histogram(breaks = bins, col = I("white"))
+# Full ggplot interface
+# ggplot(data = data, aes(score)) +
+#  geom_histogram(breaks = bins, col = I("white"))
 ```
 
 ![Grade distribution.](histogram.png)
