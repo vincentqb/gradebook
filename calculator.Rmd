@@ -312,24 +312,21 @@ renderPlot({
 
 ```{r}
 # Make two dropdown menu appear side-by-side
-fluidRow(
-  column(2, 
-         selectInput("ID", "ID:", c("All", unique(as.character(data$ID))))
-         ),
-  column(2, 
-         selectInput("Type", "Type:", c("All", unique(as.character(data$Type))))
-         )
-)
+column(2, selectInput("ID", "ID:", c("All", unique(as.character(data$ID)))))
 
 # Display the resulting table
 DT::renderDataTable(DT::datatable({
-    data <- read.csv("course.csv")
+    
+    data <- data %>% 
+      unite("Type", Type, TypeNumber, sep = " ") %>% 
+      spread(Type, Score)
+    
+    names(data)[2] <- "Course"
+    names(data)[3] <- "Final"
+
     data$X <- NULL
     if (input$ID != "All") {
       data <- data[data$ID == input$ID,]
-    }
-    if (input$Type != "All") {
-      data <- data[data$Type == input$Type,]
     }
     data
   }, rownames = FALSE))
