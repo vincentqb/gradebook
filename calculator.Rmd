@@ -282,7 +282,7 @@ head(data)
 # 6     6 59.7525
 ```
 
-Merge the final course score in the tidy table.
+We finally merge the final course score in the tidy table.
 ```{r}
 data$Type <- "Course"
 data$TypeNumber <- 1
@@ -295,39 +295,55 @@ write.csv(data, "course.csv")
 ## Grade distribution
 
 ```{r}
-
-column(2, selectInput("TypeHist", "Type:", c(unique(as.character(data$Type))), selected = "Course"))
+shinyUI(fluidPage(
+fluidRow(
+column(2, selectInput("TypeHist", "Type:", 
+                      c(unique(as.character(data$Type))), selected = "Course")),
+column(2, sliderInput("bins", "Number of bins:",
+                  min = 5, max = 20, value = 10, ticks = FALSE))
+),
+fluidRow(
 renderPlot({
     x    <- na.omit(data[data$Type == input$TypeHist, "Score"])
     
-    num_bins = 10
+    num_bins = input$bins
     bins <- seq(min(x), max(x), length.out = num_bins + 1)
 
     # draw the histogram with the specified number of bins
     qplot(x, breaks = bins, col=I("white"))
   })
+)
+))
 ```
 
 ## Interactive gradebook
 
 ```{r}
+shinyUI(fluidPage(
+fluidRow(
 # Make two dropdown menu appear side-by-side
 column(2, selectInput("ID", "ID:", c("All", unique(as.character(data$ID)))))
+),
 
+fluidRow(
 # Display the resulting table
 DT::renderDataTable(DT::datatable({
     
+    # Spread table for display
     data <- data %>% 
       unite("Type", Type, TypeNumber, sep = " ") %>% 
       spread(Type, Score)
-    
+    # Correct column names
     names(data)[2] <- "Course"
     names(data)[3] <- "Final"
+    # Reorder columns
+    data <- data[c(1:4, 8:15, 5:7, 16:19)]
 
-    data$X <- NULL
     if (input$ID != "All") {
       data <- data[data$ID == input$ID,]
     }
     data
   }, rownames = FALSE))
+)
+))
 ```
