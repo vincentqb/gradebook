@@ -23,6 +23,9 @@ library(readODS)
 library(stringr)
 library(tidyr)
 library(dplyr)
+
+library(ggplot2)
+library(shiny)
 ```
 
 ## Loading and cleaning the data
@@ -279,27 +282,6 @@ head(data)
 # 6     6 59.7525
 ```
 
-## Grade distribution
-
-We plot the grade distribution.
-```{r, echo=TRUE, fig.show='hide'}
-library(ggplot2)
-
-num_bins = 20
-score <- data$Score
-bins <- seq(min(score), max(score), length.out = num_bins + 1)
-
-qplot(score, breaks = bins, col = I("white"))
-
-# Full ggplot interface
-# ggplot(data = data, aes(score)) +
-#  geom_histogram(breaks = bins, col = I("white"))
-```
-
-![Grade distribution.](histogram.png)
-
-## Interactive gradebook
-
 Merge the final course score in the tidy table.
 ```{r}
 data$Type <- "Course"
@@ -310,10 +292,25 @@ data <- rbind(data.tidy, data)
 write.csv(data, "course.csv")
 ```
 
-We display the table interactively.
-```{r}
-library(shiny)
+## Grade distribution
 
+```{r}
+
+column(2, selectInput("TypeHist", "Type:", c(unique(as.character(data$Type))), selected = "Course"))
+renderPlot({
+    x    <- na.omit(data[data$Type == input$TypeHist, "Score"])
+    
+    num_bins = 10
+    bins <- seq(min(x), max(x), length.out = num_bins + 1)
+
+    # draw the histogram with the specified number of bins
+    qplot(x, breaks = bins, col=I("white"))
+  })
+```
+
+## Interactive gradebook
+
+```{r}
 # Make two dropdown menu appear side-by-side
 fluidRow(
   column(2, 
