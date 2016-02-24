@@ -282,7 +282,13 @@ head(data)
 # 6     6 59.7525
 ```
 
-We finally merge the final course score in the tidy table.
+We round the final grade.
+```{r}
+num_places = 1
+data$Score <- round(data$Score, num_places)
+```
+    
+We finally merge the final course score in the tidy table, and export the result.
 ```{r}
 data$Type <- "Course"
 data$TypeNumber <- 1
@@ -320,10 +326,7 @@ renderPlot({
 
 ```{r}
 shinyUI(fluidPage(
-fluidRow(
-# Make two dropdown menu appear side-by-side
-column(2, selectInput("ID", "ID:", c("All", unique(as.character(data$ID)))))
-),
+fluidRow(column(2, selectInput("ID", "ID:", c("All", unique(as.character(data$ID)))))),
 
 fluidRow(
 # Display the resulting table
@@ -333,11 +336,12 @@ DT::renderDataTable(DT::datatable({
     data <- data %>% 
       unite("Type", Type, TypeNumber, sep = " ") %>% 
       spread(Type, Score)
+    
     # Correct column names
     names(data)[2] <- "Course"
     names(data)[3] <- "Final"
     # Reorder columns
-    data <- data[c(1:4, 8:15, 5:7, 16:19)]
+    data <- data[c(1:3, 16:19, 4, 8:15, 5:7)]
 
     if (input$ID != "All") {
       data <- data[data$ID == input$ID,]
